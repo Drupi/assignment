@@ -1,0 +1,66 @@
+---
+  - name: assesment playbook
+    hosts: localhost
+    gather_facts: true
+    vars_files:
+      - cloud-config.yaml
+    tasks:
+      - name: create a disk
+        google.cloud.gcp_compute_disk:
+          name: instance-template-disk
+          size_gb: 200
+          type: 'pd-ssd'
+          zone: '{{ zone }}'
+          auth_kind: 'serviceaccount'
+          service_account_file: '{{ service_account_file }}'
+          project: '{{ project }}'
+          state: present
+          source_image: 'projects/centos-cloud/global/images/centos-7-v20221102'
+        register: disk
+      - name: create a image
+        google.cloud.gcp_compute_image:
+          name: instance-template-image
+          source_disk: "{{ disk }}"
+          project: '{{ project }}'
+          family: 'centos-7'
+          auth_kind: 'serviceaccount'
+          service_account_file: '{{ service_account_file }}'
+          state: present
+        register: image
+      - name: create a instance template
+        google.cloud.gcp_compute_instance_template:
+          name: instance-template
+          properties:
+            network_interfaces:
+              - network:
+                  selfLink: global/networks/default 
+            disks:
+            - auto_delete: 'true'
+              boot: 'true'
+              initialize_params:
+                source_image: 'projects/{{ project }}/global/images/{{ image.name }}'
+            machine_type: '{{ node_size }}'
+            metadata:
+              startup-script: |
+                #!/bin/bash
+                yum update -y
+                curl -sSLO https://dev.mysql.com/get/mysql80-community-release-el7-5.noarch.rpm
+                yum install mysql80-community-release-el7-5.noarch.rpm -y
+                ## mysql-server is not available by default in centos7.
+          auth_kind: 'serviceaccount'
+          service_account_file: '{{ service_account_file }}'
+          project: '{{ project }}'
+          service_account_contents: null
+          state: present
+        register: template
+      - name: create a instance group manager
+        google.cloud.gcp_compute_instance_group_manager:
+          name: mig-instances
+          base_instance_name: instance
+          instance_template: "{{ template }}"
+          target_size: '{{ mig_size }}'
+          zone: '{{ zone }}'
+          project: '{{ project }}'
+          auth_kind: serviceaccount
+          service_account_file: '{{ service_account_file }}'
+          state: present

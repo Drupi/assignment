@@ -1,0 +1,5 @@
+service_account_file: "credentials.json"
+project : "__PLACEHOLDER__"
+zone: "europe-west1-b"
+mig_size: 1
+node_size: "e2-medium"
