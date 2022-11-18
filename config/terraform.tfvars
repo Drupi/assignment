@@ -1,0 +1,10 @@
+project_id                 = "valid-aquifer-368818"
+cluter_name                = "gke-assigment"
+region                     = "europe-west1"
+availability_zones         = ["europe-west1-b", "europe-west1-c", "europe-west1-d"]
+network                    = "gke-assigment"
+subnetwork                 = "gke-assigment-01"
+ip_range_pods_name         = "gke-assigment-01-pods"
+ip_range_services_name     = "gke-assigment-01-services"
+airflow_username           = "airflow"
+airflow_password           = "airflow"

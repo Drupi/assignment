@@ -1,0 +1,12 @@
+resources:
+- type: storage.v1.bucket
+  name: statefiles-{{ env["project_number"] }}-{{ env["project"] }}
+  properties:
+    predefinedAcl: projectPrivate
+    projection: full
+    location: EU
+    storageClass: STANDARD
+    iamConfiguration:
+      publicAccessPrevention: enforced
+    versioning:
+      enabled: true
