@@ -1,4 +1,4 @@
-project_id                 = "valid-aquifer-368818"
+project_id                 = "__PLACEHOLDER__"
 cluter_name                = "gke-assigment"
 region                     = "europe-west1"
 availability_zones         = ["europe-west1-b", "europe-west1-c", "europe-west1-d"]
